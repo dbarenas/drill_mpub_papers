@@ -1,0 +1,112 @@
+{
+    "study_metadata": {
+        "pmid": "12345678",
+        "title": "Mock Study: Lenvatinib vs. Sorafenib for HCC",
+        "year": 2023,
+        "journal": "Journal of Mock Oncology",
+        "doi": "10.1000/jmo.2023.001",
+        "study_design": "RCT",
+        "phase": "Phase III",
+        "sample_size_total": 954,
+        "arms": ["Lenvatinib", "Sorafenib"],
+        "comparator": "Sorafenib"
+    },
+    "experiments": [
+        {
+            "arm_name": "Lenvatinib",
+            "treatment": {
+                "name": "Lenvatinib",
+                "category": "Systemic",
+                "line_of_therapy": "first-line",
+                "duration": "Until progression or unacceptable toxicity",
+                "combination": false,
+                "components": null
+            },
+            "bclc_baseline": {
+                "tumor_burden": {
+                    "nodules": ">3",
+                    "largest_nodule_cm": null,
+                    "vascular_invasion": true,
+                    "extrahepatic_spread": true,
+                    "afp_ng_ml": null,
+                    "afp_gt_400": null
+                },
+                "child_pugh": {
+                    "bilirubin_mg_dl": null,
+                    "albumin_g_dl": null,
+                    "inr": null,
+                    "ascites": null,
+                    "encephalopathy": null,
+                    "class_letter": "A",
+                    "score": 5
+                },
+                "performance_status": {
+                    "ecog": 1
+                }
+            },
+            "bclc_stage_reported": "C",
+            "bclc_2025_cuse": {
+                "mentioned": false,
+                "cuse_criteria": null,
+                "personalized_factors": null,
+                "decision_logic": null
+            },
+            "results": {
+                "response_criteria": "mRECIST",
+                "os": {
+                    "value": "13.6 months",
+                    "ci": null,
+                    "p_value": null,
+                    "follow_up": null
+                },
+                "pfs": {
+                    "value": "7.4 months",
+                    "ci": null,
+                    "p_value": null,
+                    "follow_up": null
+                },
+                "orr": {
+                    "value": "24.1%",
+                    "ci": null,
+                    "p_value": null,
+                    "follow_up": null
+                },
+                "dcr": {
+                    "value": null,
+                    "ci": null,
+                    "p_value": null,
+                    "follow_up": null
+                },
+                "ttp": {
+                    "value": null,
+                    "ci": null,
+                    "p_value": null,
+                    "follow_up": null
+                },
+                "other": null
+            },
+            "safety": {
+                "any_adverse_events_reported": true,
+                "grade_3_4_events": [
+                    {
+                        "name": "Hypertension",
+                        "grade": null,
+                        "frequency": "42%",
+                        "notes": null
+                    },
+                    {
+                        "name": "Diarrhea",
+                        "grade": null,
+                        "frequency": "8%",
+                        "notes": null
+                    }
+                ],
+                "saes": null,
+                "discontinuation_due_to_toxicity": null,
+                "treatment_related_deaths": null,
+                "narrative": null
+            }
+        }
+    ],
+    "evidence_level": "high"
+}

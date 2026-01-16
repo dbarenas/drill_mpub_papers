@@ -1,0 +1,8 @@
+Title: A Phase III Randomized Controlled Trial of Lenvatinib vs. Sorafenib in Unresectable Hepatocellular Carcinoma.
+
+Abstract:
+Background: Systemic therapy for unresectable hepatocellular carcinoma (HCC) is limited. This study compares the efficacy and safety of lenvatinib, a multi-kinase inhibitor, with sorafenib as a first-line treatment for advanced HCC.
+
+Methods: This randomized, open-label, non-inferiority Phase III trial was conducted across 154 sites. A total of 954 patients with unresectable HCC, BCLC stage C, Child-Pugh class A, and ECOG performance status of 0 or 1 were randomized (1:1) to receive either lenvatinib (12 mg for body weight ≥60 kg or 8 mg for <60 kg) or sorafenib (400 mg twice daily). The primary endpoint was overall survival (OS). Secondary endpoints included progression-free survival (PFS) and objective response rate (ORR) assessed by mRECIST.
+
+Results: The median OS was 13.6 months for lenvatinib versus 12.3 months for sorafenib, meeting the non-inferiority criterion. Median PFS was significantly longer with lenvatinib (7.4 months) than with sorafenib (3.7 months). The ORR was 24.1% with lenvatinib and 9.2% with sorafenib. The most common grade 3-4 adverse events in the lenvatinib arm were hypertension (42%) and diarrhea (8%).
