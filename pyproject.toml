@@ -1,0 +1,22 @@
+[project]
+name = "hcc-bclc-extractor"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "biopython>=1.83",
+  "requests>=2.32",
+  "lxml>=5.2",
+  "pydantic>=2.8",
+  "pydantic-settings>=2.4",
+  "langchain>=0.2.14",
+  "langchain-core>=0.2.33",
+  "langchain-community>=0.2.12",
+  "tenacity>=8.3",
+  "tqdm>=4.66",
+  "python-dotenv>=1.0",
+  "pypdf>=4.2",
+  "pymupdf>=1.24.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2", "pytest-cov>=5.0", "ruff>=0.5", "mypy>=1.10"]
