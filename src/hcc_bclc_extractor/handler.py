@@ -1,8 +1,8 @@
 import json
 import os
 import logging
-from hcc_bclc_extractor.pipeline import process_article
-from hcc_bclc_extractor import db
+from .pipeline import process_article
+from . import db
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -49,6 +49,7 @@ def handler(event, context):
             file_path=file_path,
             persist_to_db=persist_to_db,
             article_type=article_type,
+            use_mock=use_mock,
         )
 
         # Convert Pydantic model to a dictionary

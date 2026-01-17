@@ -1,9 +1,13 @@
+import logging
 from typing import Union
 from pathlib import Path
 from .pdf_text import extract_text_from_pdf
 from .extractor import extract_structured_data
 from .schema import ExtractionOutput
 from . import db
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 def process_article(
     file_path: Union[str, Path],
@@ -46,7 +50,7 @@ def process_article(
     structured_data = extract_structured_data(text, use_mock=use_mock)
 
     if persist_to_db:
-        print("Persisting extraction to the database...")
+        logger.info("Persisting extraction to the database...")
         db.insert_extraction(
             extraction_output=structured_data,
             pdf_path=str(file_path),

@@ -20,7 +20,7 @@ This project is architected for scalability and robustness, using a Pydantic-bas
 ## 3. Architecture
 
 The application is designed to be deployed as an AWS Lambda function. The key components are:
-1.  **Lambda Handler (`lambda_function.py`)**: The entry point for the Lambda function. It receives an event, orchestrates the extraction pipeline, and returns a JSON response.
+1.  **Lambda Handler (`handler.py`)**: The entry point for the Lambda function, located in the source package.
 2.  **Extraction Pipeline (`pipeline.py`)**: Manages the workflow of reading a file, extracting text, and calling the data extractor.
 3.  **Bedrock Extractor (`extractor.py`)**: Interfaces with the Amazon Bedrock API to invoke the LLM, sending the text and receiving a structured JSON response.
 4.  **Database Module (`db.py`)**: Handles all database interactions, including connection management and data insertion using SQLAlchemy.
@@ -68,13 +68,13 @@ The script can initialize the database, process a sample file, and persist the r
 
 ```bash
 # Initialize the database schema
-python run_extraction.py --init-db
+python scripts/run_extraction.py --init-db
 
 # Run extraction on the sample file and print JSON to console
-python run_extraction.py
+python scripts/run_extraction.py
 
 # Run extraction and save the results to the database
-python run_extraction.py --persist
+python scripts/run_extraction.py --persist
 ```
 
 ## 6. AWS Lambda Deployment
@@ -82,10 +82,10 @@ python run_extraction.py --persist
 To deploy this application as a Lambda function, you will need to package it with its dependencies and configure the necessary environment variables and permissions.
 
 ### Deployment Steps
-1.  **Package the code**: Create a zip file containing the `src` directory, `lambda_function.py`, and all installed dependencies.
+1.  **Package the code**: Create a zip file containing the `src` directory and all installed dependencies.
 2.  **Create a Lambda function**: In the AWS Management Console, create a new Lambda function with a Python 3.11 runtime.
 3.  **Upload the package**: Upload the zip file as the function's code.
-4.  **Configure the handler**: Set the handler to `lambda_function.handler`.
+4.  **Configure the handler**: Set the handler to `hcc_bclc_extractor.handler.handler`.
 5.  **Set Environment Variables**:
     -   `DATABASE_URL`: The connection string for your PostgreSQL database.
     -   `AWS_REGION`: The AWS region where Bedrock is enabled.
@@ -108,11 +108,12 @@ pytest
 hcc-bclc-extractor/
 ├── pyproject.toml              # Project metadata and dependencies
 ├── README.md                   # This documentation file
-├── lambda_function.py          # AWS Lambda handler
-├── run_extraction.py           # Local runner script
+├── scripts/
+│   └── run_extraction.py       # Local runner script
 ├── src/
 │   └── hcc_bclc_extractor/
 │       ├── __init__.py
+│       ├── handler.py          # AWS Lambda handler
 │       ├── db.py               # Database connection and ORM logic
 │       ├── extractor.py        # Bedrock LLM interaction logic
 │       ├── pdf_text.py         # Text extraction from PDF files
