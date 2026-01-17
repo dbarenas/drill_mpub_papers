@@ -8,7 +8,8 @@ from . import db
 def process_article(
     file_path: Union[str, Path],
     persist_to_db: bool = False,
-    article_type: str = "unknown"
+    article_type: str = "unknown",
+    use_mock: bool = False
 ) -> ExtractionOutput:
     """
     Runs the full data extraction pipeline on a single article file.
@@ -42,7 +43,7 @@ def process_article(
     if not text:
         raise ValueError("Failed to extract text from the document.")
 
-    structured_data = extract_structured_data(text)
+    structured_data = extract_structured_data(text, use_mock=use_mock)
 
     if persist_to_db:
         print("Persisting extraction to the database...")
