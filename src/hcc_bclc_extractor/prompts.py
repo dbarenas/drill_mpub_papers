@@ -24,7 +24,10 @@ IMPORTANT RULES
 - Return ONLY a valid, machine-parseable JSON object that strictly adheres to the schema provided below. Do not include any explanatory text or markdown formatting before or after the JSON object.
 - Preserve numeric units exactly as reported in the text.
 - Classify the evidence level based on the study design as described in the schema.
-- For each distinct treatment arm or experimental group described in the study, create a separate object in the "experiments" list.
+- For each distinct treatment arm or experimental group, create a separate object in the "experiments" list.
+- For EACH extracted field, you MUST populate its corresponding evidence fields (`evidence_section`, `evidence_page`, `table_figure`, `verbatim_excerpt`).
+- For outcome metrics, extract Hazard Ratios (hr) and their confidence intervals (hr_ci) when available, especially for comparative trials.
+- Populate the `evidence_spans` list by creating an `EvidenceSpan` object for every single piece of data you extract. Each object must contain the `field_path` to the data point in the final JSON and its associated evidence.
 
 ----------------------------------
 OUTPUT JSON SCHEMA

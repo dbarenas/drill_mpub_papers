@@ -16,6 +16,8 @@ dependencies = [
   "python-dotenv>=1.0",
   "pypdf>=4.2",
   "pymupdf>=1.24.9",
+  "sqlalchemy>=2.0",
+  "psycopg2-binary>=2.9",
 ]
 
 [project.optional-dependencies]

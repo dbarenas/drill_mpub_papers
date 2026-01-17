@@ -55,33 +55,63 @@
                 "response_criteria": "mRECIST",
                 "os": {
                     "value": "13.6 months",
-                    "ci": null,
-                    "p_value": null,
-                    "follow_up": null
+                    "ci": "95% CI, 12.0-15.2",
+                    "p_value": "p<0.001",
+                    "hr": 0.92,
+                    "hr_ci": "0.79-1.06",
+                    "follow_up": null,
+                    "evidence_section": "Results - Survival Analysis",
+                    "evidence_page": 5,
+                    "table_figure": "Figure 2A",
+                    "verbatim_excerpt": "Median overall survival was 13.6 months (95% CI, 12.0-15.2) in the lenvatinib group."
                 },
                 "pfs": {
                     "value": "7.4 months",
-                    "ci": null,
-                    "p_value": null,
-                    "follow_up": null
+                    "ci": "95% CI, 6.9-8.8",
+                    "p_value": "p<0.001",
+                    "hr": 0.66,
+                    "hr_ci": "0.57-0.77",
+                    "follow_up": null,
+                    "evidence_section": "Results - Survival Analysis",
+                    "evidence_page": 6,
+                    "table_figure": "Figure 2B",
+                    "verbatim_excerpt": "Progression-free survival was 7.4 months (95% CI, 6.9-8.8) with lenvatinib."
                 },
                 "orr": {
                     "value": "24.1%",
                     "ci": null,
                     "p_value": null,
-                    "follow_up": null
+                    "hr": null,
+                    "hr_ci": null,
+                    "follow_up": null,
+                    "evidence_section": "Results - Tumor Response",
+                    "evidence_page": 7,
+                    "table_figure": "Table 3",
+                    "verbatim_excerpt": "The objective response rate was 24.1% in the lenvatinib arm."
                 },
                 "dcr": {
                     "value": null,
                     "ci": null,
                     "p_value": null,
-                    "follow_up": null
+                    "hr": null,
+                    "hr_ci": null,
+                    "follow_up": null,
+                    "evidence_section": null,
+                    "evidence_page": null,
+                    "table_figure": null,
+                    "verbatim_excerpt": null
                 },
                 "ttp": {
                     "value": null,
                     "ci": null,
                     "p_value": null,
-                    "follow_up": null
+                    "hr": null,
+                    "hr_ci": null,
+                    "follow_up": null,
+                    "evidence_section": null,
+                    "evidence_page": null,
+                    "table_figure": null,
+                    "verbatim_excerpt": null
                 },
                 "other": null
             },
@@ -90,14 +120,127 @@
                 "grade_3_4_events": [
                     {
                         "name": "Hypertension",
-                        "grade": null,
+                        "grade": "3-4",
                         "frequency": "42%",
                         "notes": null
-                    },
+                    }
+                ],
+                "saes": null,
+                "discontinuation_due_to_toxicity": "20%",
+                "treatment_related_deaths": "1%",
+                "narrative": "The most common grade 3 or 4 adverse event was hypertension (42%)."
+            }
+        },
+        {
+            "arm_name": "Sorafenib",
+            "treatment": {
+                "name": "Sorafenib",
+                "category": "Systemic",
+                "line_of_therapy": "first-line",
+                "duration": "Until progression or unacceptable toxicity",
+                "combination": false,
+                "components": null
+            },
+            "bclc_baseline": {
+                "tumor_burden": {
+                    "nodules": ">3",
+                    "largest_nodule_cm": null,
+                    "vascular_invasion": true,
+                    "extrahepatic_spread": true,
+                    "afp_ng_ml": null,
+                    "afp_gt_400": null
+                },
+                "child_pugh": {
+                    "bilirubin_mg_dl": null,
+                    "albumin_g_dl": null,
+                    "inr": null,
+                    "ascites": null,
+                    "encephalopathy": null,
+                    "class_letter": "A",
+                    "score": 6
+                },
+                "performance_status": {
+                    "ecog": 1
+                }
+            },
+            "bclc_stage_reported": "C",
+            "bclc_2025_cuse": {
+                "mentioned": false,
+                "cuse_criteria": null,
+                "personalized_factors": null,
+                "decision_logic": null
+            },
+            "results": {
+                "response_criteria": "mRECIST",
+                "os": {
+                    "value": "12.3 months",
+                    "ci": null,
+                    "p_value": null,
+                    "hr": null,
+                    "hr_ci": null,
+                    "follow_up": null,
+                    "evidence_section": null,
+                    "evidence_page": null,
+                    "table_figure": null,
+                    "verbatim_excerpt": null
+                },
+                "pfs": {
+                    "value": "3.7 months",
+                    "ci": null,
+                    "p_value": null,
+                    "hr": null,
+                    "hr_ci": null,
+                    "follow_up": null,
+                    "evidence_section": null,
+                    "evidence_page": null,
+                    "table_figure": null,
+                    "verbatim_excerpt": null
+                },
+                "orr": {
+                    "value": "9.2%",
+                    "ci": null,
+                    "p_value": null,
+                    "hr": null,
+                    "hr_ci": null,
+                    "follow_up": null,
+                    "evidence_section": null,
+                    "evidence_page": null,
+                    "table_figure": null,
+                    "verbatim_excerpt": null
+                },
+                "dcr": {
+                    "value": null,
+                    "ci": null,
+                    "p_value": null,
+                    "hr": null,
+                    "hr_ci": null,
+                    "follow_up": null,
+                    "evidence_section": null,
+                    "evidence_page": null,
+                    "table_figure": null,
+                    "verbatim_excerpt": null
+                },
+                "ttp": {
+                    "value": null,
+                    "ci": null,
+                    "p_value": null,
+                    "hr": null,
+                    "hr_ci": null,
+                    "follow_up": null,
+                    "evidence_section": null,
+                    "evidence_page": null,
+                    "table_figure": null,
+                    "verbatim_excerpt": null
+                },
+                "other": null
+            },
+            "safety": {
+                "any_adverse_events_reported": true,
+                "grade_3_4_events": [
                     {
-                        "name": "Diarrhea",
+                        "name": "Hand-foot skin reaction",
                         "grade": null,
-                        "frequency": "8%",
+                        "frequency": "11%",
                         "notes": null
                     }
                 ],
@@ -108,5 +251,25 @@
             }
         }
     ],
-    "evidence_level": "high"
+    "evidence_level": "high",
+    "evidence_spans": [
+        {
+            "field_path": "study_metadata.pmid",
+            "value_json": "\"12345678\"",
+            "evidence_section": "Header",
+            "evidence_page": 1,
+            "table_figure": null,
+            "verbatim_excerpt": "PMID: 12345678",
+            "locator": null
+        },
+        {
+            "field_path": "experiments[0].results.os.value",
+            "value_json": "\"13.6 months\"",
+            "evidence_section": "Results - Survival Analysis",
+            "evidence_page": 5,
+            "table_figure": "Figure 2A",
+            "verbatim_excerpt": "Median overall survival was 13.6 months (95% CI, 12.0-15.2) in the lenvatinib group.",
+            "locator": null
+        }
+    ]
 }

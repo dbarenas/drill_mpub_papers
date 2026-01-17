@@ -66,10 +66,28 @@ class BCLC2025CUSE(BaseModel):
 
 class OutcomeMetric(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    value: Optional[str] = None  # keep as string to preserve units/format like "12.3 mo (95% CI...)"
-    ci: Optional[str] = None
-    p_value: Optional[str] = None
+    value: Optional[str] = None  # keep as string to preserve units/format like "12.3 mo"
+    ci: Optional[str] = None  # e.g., "95% CI, 12.0-15.2"
+    p_value: Optional[str] = None # e.g., "p<0.001"
+    hr: Optional[float] = None
+    hr_ci: Optional[str] = None # e.g., "0.75-0.95"
     follow_up: Optional[str] = None
+
+    # Evidence fields
+    evidence_section: Optional[str] = None # e.g., "Results - Survival Analysis"
+    evidence_page: Optional[int] = None
+    table_figure: Optional[str] = None # e.g., "Table 2"
+    verbatim_excerpt: Optional[str] = None
+
+class EvidenceSpan(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    field_path: str
+    value_json: str
+    evidence_section: Optional[str] = None
+    evidence_page: Optional[int] = None
+    table_figure: Optional[str] = None
+    verbatim_excerpt: Optional[str] = None
+    locator: Optional[str] = None
 
 class Results(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -112,3 +130,4 @@ class ExtractionOutput(BaseModel):
     study_metadata: StudyMetadata
     experiments: List[ExperimentArm]
     evidence_level: EvidenceLevel
+    evidence_spans: List[EvidenceSpan]
