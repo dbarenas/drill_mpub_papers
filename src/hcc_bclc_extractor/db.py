@@ -1,27 +1,34 @@
 import os
+import json
+import pathlib
+import logging
+from contextlib import contextmanager
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
-from dotenv import load_dotenv
-from contextlib import contextmanager
+from .schema import ExtractionOutput
 
-# Load environment variables from .env file
-load_dotenv()
+# Configure logging
+logger = logging.getLogger(__name__)
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-_engine = None
+# This module maintains a global engine to allow for connection pooling across
+# Lambda invocations.
+_engine: Engine | None = None
 
 def get_engine() -> Engine:
     """
-    Returns a SQLAlchemy engine.
-    If one has not been created, it creates one.
+    Returns a SQLAlchemy engine, creating one if it doesn't exist.
+    This function is designed to be Lambda-friendly by reusing the engine
+    across invocations.
     """
     global _engine
     if _engine is None:
-        db_url = DATABASE_URL
+        db_url = os.getenv("DATABASE_URL")
         if not db_url:
+            logger.error("DATABASE_URL environment variable is not set.")
             raise ValueError("DATABASE_URL environment variable is not set.")
+
+        logger.info("Creating new SQLAlchemy engine...")
         _engine = create_engine(db_url)
     return _engine
 
@@ -36,29 +43,25 @@ def get_db_session():
     try:
         yield session
         session.commit()
-    except:
+    except Exception as e:
+        logger.error("Database session failed, rolling back. Error: %s", e, exc_info=True)
         session.rollback()
         raise
     finally:
         session.close()
 
-import pathlib
-
-def test_connection():
+def test_connection() -> bool:
     """
     Tests the connection to the database.
     """
     try:
         with get_db_session() as session:
             session.execute(text("SELECT 1"))
-        print("Database connection successful.")
+        logger.info("Database connection successful.")
         return True
     except Exception as e:
-        print(f"Database connection failed: {e}")
+        logger.error("Database connection failed: %s", e)
         return False
-
-from .schema import ExtractionOutput
-import json
 
 def initialize_schema():
     """
@@ -74,11 +77,10 @@ def initialize_schema():
     try:
         with get_db_session() as session:
             session.execute(text(schema_sql))
-        print("Database schema initialized successfully.")
+        logger.info("Database schema initialized successfully.")
     except Exception as e:
-        print(f"Failed to initialize database schema: {e}")
+        logger.error("Failed to initialize database schema: %s", e)
         raise
-
 
 def insert_extraction(
     extraction_output: ExtractionOutput,
@@ -86,7 +88,7 @@ def insert_extraction(
     article_type: str,
     schema_version: str = "1.0",
     extractor_bundle_version: str = "0.1.0"
-):
+) -> str:
     """
     Inserts a full extraction payload into the database, normalizing the data
     into the appropriate tables.
@@ -95,7 +97,6 @@ def insert_extraction(
         meta = extraction_output.study_metadata
         article_id = None
 
-        # Step 1: Find existing article by pmid or doi
         find_clauses = []
         find_params = {}
         if meta.pmid:
@@ -110,9 +111,8 @@ def insert_extraction(
             result = session.execute(find_sql, find_params)
             article_id = result.scalar_one_or_none()
 
-        # Step 2: Upsert the article
         if article_id:
-            # Update existing article
+            logger.info("Found existing article with ID: %s. Updating.", article_id)
             update_sql = text("""
                 UPDATE articles
                 SET pmid = :pmid, doi = :doi, title = :title, journal = :journal, year = :year, updated_at = NOW()
@@ -123,7 +123,7 @@ def insert_extraction(
                 "journal": meta.journal, "year": meta.year
             })
         else:
-            # Insert new article
+            logger.info("No existing article found. Inserting new one.")
             insert_sql = text("""
                 INSERT INTO articles (pmid, doi, title, journal, year, article_type, pdf_path)
                 VALUES (:pmid, :doi, :title, :journal, :year, :article_type, :pdf_path)
@@ -135,15 +135,12 @@ def insert_extraction(
             })
             article_id = result.scalar_one()
 
-        # Step 3: Insert the raw extraction payload
         extraction_sql = text("""
             INSERT INTO extractions (article_id, schema_version, extractor_bundle_version, payload)
             VALUES (:article_id, :schema_version, :extractor_bundle_version, :payload)
             RETURNING id;
         """)
-
         payload_json = extraction_output.model_dump_json()
-
         result = session.execute(extraction_sql, {
             "article_id": article_id,
             "schema_version": schema_version,
@@ -152,11 +149,10 @@ def insert_extraction(
         })
         extraction_id = result.scalar_one()
 
-        # Step 4: Recursively insert evidence spans and outcomes
         _insert_evidence_spans(session, extraction_id, extraction_output)
         _insert_outcomes_survival(session, extraction_id, extraction_output)
 
-        print(f"Successfully inserted extraction for article {article_id} with extraction ID {extraction_id}.")
+        logger.info("Successfully inserted extraction for article %s with extraction ID %s.", article_id, extraction_id)
         return extraction_id
 
 

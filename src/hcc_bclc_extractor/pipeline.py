@@ -1,3 +1,4 @@
+import logging
 from typing import Union
 from pathlib import Path
 from .pdf_text import extract_text_from_pdf
@@ -5,10 +6,14 @@ from .extractor import extract_structured_data
 from .schema import ExtractionOutput
 from . import db
 
+# Configure logging
+logger = logging.getLogger(__name__)
+
 def process_article(
     file_path: Union[str, Path],
     persist_to_db: bool = False,
-    article_type: str = "unknown"
+    article_type: str = "unknown",
+    use_mock: bool = False
 ) -> ExtractionOutput:
     """
     Runs the full data extraction pipeline on a single article file.
@@ -42,10 +47,10 @@ def process_article(
     if not text:
         raise ValueError("Failed to extract text from the document.")
 
-    structured_data = extract_structured_data(text)
+    structured_data = extract_structured_data(text, use_mock=use_mock)
 
     if persist_to_db:
-        print("Persisting extraction to the database...")
+        logger.info("Persisting extraction to the database...")
         db.insert_extraction(
             extraction_output=structured_data,
             pdf_path=str(file_path),

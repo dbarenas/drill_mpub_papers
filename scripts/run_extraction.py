@@ -1,14 +1,20 @@
-# run_extraction.py
+# scripts/run_extraction.py
 import json
 import argparse
 import os
+import sys
 from pathlib import Path
+
+# Add the project root to the Python path to ensure imports work correctly
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
+
 from hcc_bclc_extractor.pipeline import process_article
 from hcc_bclc_extractor import db
 from dotenv import load_dotenv
 
-# Load environment variables from a .env file
-load_dotenv()
+# Load environment variables from a .env file located in the project root
+load_dotenv(dotenv_path=PROJECT_ROOT / ".env")
 
 def main():
     """
@@ -48,8 +54,8 @@ def main():
         db.initialize_schema()
         return
 
-    # Define the path to the sample article file
-    sample_file = Path("tests/fixtures/sample_article_1.txt")
+    # Define the path to the sample article file, relative to the project root
+    sample_file = PROJECT_ROOT / "tests" / "fixtures" / "sample_article_1.txt"
     print(f"Processing article: {sample_file}...")
 
     # Check for DATABASE_URL if persisting

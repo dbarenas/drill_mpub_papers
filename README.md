@@ -2,25 +2,32 @@
 
 ## 1. Overview
 
-The **HCC BCLC Clinical Data Extractor** is a specialized Python-based tool designed to automate the extraction of structured clinical and experimental data from scientific articles on hepatocellular carcinoma (HCC). The agent analyzes the full text of research papers, normalizes the findings according to the **Barcelona Clinic Liver Cancer (BCLC)** framework, and outputs the data in a clean, machine-readable JSON format.
+The **HCC BCLC Clinical Data Extractor** is a serverless, Python-based application designed to automate the extraction of structured clinical and experimental data from scientific articles on hepatocellular carcinoma (HCC). The system uses **AWS Lambda** and **Amazon Bedrock** to analyze research papers, normalize findings according to the BCLC framework, and persist the data into a PostgreSQL database.
 
-This project is built to be a robust foundation for clinical data analysis, evidence synthesis, and research. It uses a Pydantic-based schema to ensure that all extracted data is strongly typed and validated, preventing data integrity issues.
-
-The current implementation uses a **mocked Large Language Model (LLM)** for deterministic testing, allowing the entire pipeline—from PDF text extraction to data validation—to be verified without relying on an external API.
+This project is architected for scalability and robustness, using a Pydantic-based schema for data validation and SQLAlchemy for database interactions. By leveraging a serverless architecture, it provides a cost-effective and auto-scaling solution for clinical data analysis and research.
 
 ## 2. Key Features
 
--   **Structured Data Extraction**: Converts unstructured text from scientific papers into a structured JSON object.
--   **BCLC Framework Alignment**: Normalizes all extracted data to the specific dimensions of the BCLC staging and treatment framework.
--   **Schema Validation**: Leverages Pydantic models to enforce a strict, validated data structure for all outputs.
+-   **Serverless Architecture**: Built on AWS Lambda for auto-scaling, reliability, and cost-efficiency.
+-   **AI-Powered Extraction**: Uses Amazon Bedrock with Anthropic's Claude model to extract structured data from unstructured text.
+-   **Structured JSON Output**: Converts scientific text into a validated, machine-readable JSON format.
+-   **Database Persistence**: Saves all extracted data into a normalized PostgreSQL database.
+-   **BCLC Framework Alignment**: Normalizes data to the specific dimensions of the BCLC staging and treatment framework.
+-   **Schema Validation**: Leverages Pydantic models to enforce a strict, validated data structure.
 -   **PDF and Text Processing**: Capable of extracting text directly from both `.pdf` and `.txt` files.
--   **Modular Architecture**: The codebase is organized into logical, decoupled modules for easy maintenance and extension.
--   **Test-Driven**: Includes a comprehensive test suite with unit, smoke, and golden-file tests to ensure reliability.
--   **Extensible**: Designed to be easily adapted to use a live LLM by replacing the mock function in the `extractor` module.
+-   **Test-Driven**: Includes a comprehensive, mocked test suite to ensure reliability without live AWS calls.
 
-## 3. Setup and Installation
+## 3. Architecture
 
-To get the project up and running, follow these steps. Python 3.11 or higher is required.
+The application is designed to be deployed as an AWS Lambda function. The key components are:
+1.  **Lambda Handler (`handler.py`)**: The entry point for the Lambda function, located in the source package.
+2.  **Extraction Pipeline (`pipeline.py`)**: Manages the workflow of reading a file, extracting text, and calling the data extractor.
+3.  **Bedrock Extractor (`extractor.py`)**: Interfaces with the Amazon Bedrock API to invoke the LLM, sending the text and receiving a structured JSON response.
+4.  **Database Module (`db.py`)**: Handles all database interactions, including connection management and data insertion using SQLAlchemy.
+
+## 4. Setup and Installation
+
+To get the project up and running locally, follow these steps. Python 3.11 or higher is required.
 
 ### Step 1: Clone the Repository
 
@@ -31,110 +38,88 @@ cd hcc-bclc-extractor
 
 ### Step 2: Install Dependencies
 
-The project uses `pip` and `pyproject.toml` for dependency management. It is highly recommended to use a virtual environment.
+Use a virtual environment and install the package in editable mode with development dependencies.
 
 ```bash
-# Create and activate a virtual environment (optional but recommended)
 python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-
-# Install the package in editable mode with development dependencies
+source venv/bin/activate
 pip install -e .[dev]
 ```
 
-Installing in **editable mode** (`-e`) ensures that any changes you make to the source code are immediately available without needing to reinstall the package.
+## 5. Local Usage
 
-## 4. Usage
+An example script, `run_extraction.py`, is provided to demonstrate the pipeline locally.
 
-An example script, `run_extraction.py`, is provided in the root directory to demonstrate how to use the data extraction pipeline.
+### Environment Variables
+
+Create a `.env` file in the project root with the following variables:
+
+```
+DATABASE_URL="postgresql://user:password@host:port/dbname"
+AWS_REGION="your-aws-region"
+# Optional: Specify AWS credentials if not managed by an instance profile
+# AWS_ACCESS_KEY_ID="your-access-key"
+# AWS_SECRET_ACCESS_KEY="your-secret-key"
+```
 
 ### Running the Example
 
-The script is configured to process a sample text file located at `tests/fixtures/sample_article_1.txt`. To run it, execute the following command from the project's root directory:
+The script can initialize the database, process a sample file, and persist the results.
 
 ```bash
-python run_extraction.py
+# Initialize the database schema
+python scripts/run_extraction.py --init-db
+
+# Run extraction on the sample file and print JSON to console
+python scripts/run_extraction.py
+
+# Run extraction and save the results to the database
+python scripts/run_extraction.py --persist
 ```
 
-### Expected Output
+## 6. AWS Lambda Deployment
 
-The script will process the article and print a formatted JSON object to the console, containing the data extracted and validated by the pipeline.
+To deploy this application as a Lambda function, you will need to package it with its dependencies and configure the necessary environment variables and permissions.
 
-```json
-Processing article: tests/fixtures/sample_article_1.txt...
+### Deployment Steps
+1.  **Package the code**: Create a zip file containing the `src` directory and all installed dependencies.
+2.  **Create a Lambda function**: In the AWS Management Console, create a new Lambda function with a Python 3.11 runtime.
+3.  **Upload the package**: Upload the zip file as the function's code.
+4.  **Configure the handler**: Set the handler to `hcc_bclc_extractor.handler.handler`.
+5.  **Set Environment Variables**:
+    -   `DATABASE_URL`: The connection string for your PostgreSQL database.
+    -   `AWS_REGION`: The AWS region where Bedrock is enabled.
+6.  **Assign IAM Permissions**: Create an IAM role for the Lambda function with permissions to:
+    -   Invoke the Bedrock model (`bedrock:InvokeModel`).
+    -   Connect to the VPC where your database is located (if applicable).
+    -   Write to CloudWatch Logs.
 
-Extraction Complete. Results:
-----------------------------------
-{
-  "study_metadata": {
-    "pmid": "12345678",
-    // ... (full JSON output)
-  },
-  "experiments": [
-    // ...
-  ],
-  "evidence_level": "high"
-}
-----------------------------------
-```
+## 7. Running Tests
 
-### Processing Your Own Files
-
-To process your own scientific article (e.g., a PDF), simply modify the `sample_file` path in `run_extraction.py`:
-
-```python
-# In run_extraction.py
-# Change this path to your file
-sample_file = Path("path/to/your/document.pdf")
-```
-
-## 5. Running Tests
-
-The project includes a full test suite to ensure the code is working correctly. To run all tests, use `pytest`:
+The test suite is designed to run without live AWS credentials by mocking the Bedrock API calls.
 
 ```bash
 pytest
 ```
 
-The tests will:
-1.  Verify that the Pydantic schema can be correctly initialized.
-2.  Run a "smoke test" to ensure the main pipeline executes without errors.
-3.  Perform a "golden file" test to ensure the pipeline's output for a sample article exactly matches a pre-defined, expected JSON structure.
-
-## 6. Project Structure
-
-The project is organized into the following key modules and directories:
+## 8. Project Structure
 
 ```
 hcc-bclc-extractor/
 ├── pyproject.toml              # Project metadata and dependencies
 ├── README.md                   # This documentation file
-├── run_extraction.py           # Example script for demonstrating the pipeline
+├── scripts/
+│   └── run_extraction.py       # Local runner script
 ├── src/
 │   └── hcc_bclc_extractor/
 │       ├── __init__.py
-│       ├── schema.py           # Defines the Pydantic models for data validation
-│       ├── pdf_text.py         # Handles text extraction from PDF files
-│       ├── prompts.py          # Contains the prompt template for the LLM
-│       ├── extractor.py        # Core logic for LLM interaction and data parsing
-│       ├── pipeline.py         # Orchestrates the end-to-end extraction workflow
-│       ├── pubmed.py           # (Placeholder) For fetching articles from PubMed
-│       ├── pmc.py              # (Placeholder) For fetching articles from PMC
-│       └── metrics.py          # (Placeholder) For evaluating extraction quality
+│       ├── handler.py          # AWS Lambda handler
+│       ├── db.py               # Database connection and ORM logic
+│       ├── extractor.py        # Bedrock LLM interaction logic
+│       ├── pdf_text.py         # Text extraction from PDF files
+│       ├── pipeline.py         # End-to-end extraction workflow
+│       ├── prompts.py          # Prompt templates for the LLM
+│       └── schema.py           # Pydantic data models
 └── tests/
-    ├── fixtures/               # Contains sample articles and expected JSON outputs
-    │   ├── sample_article_1.txt
-    │   └── sample_article_1.expected.json
-    ├── test_schema_validation.py # Tests for the Pydantic schema
-    ├── test_extraction_smoke.py  # Smoke test for the main pipeline
-    └── test_golden_outputs.py    # Golden file test for output validation
+    └── ...                     # Test files and fixtures
 ```
-
-### Module Descriptions
-
--   **`schema.py`**: The heart of the project's data structure. It contains all the Pydantic models that define the shape and types of the final JSON output. `ConfigDict(extra="forbid")` is used to prevent any data that doesn't conform to the schema.
--   **`pdf_text.py`**: A utility module that uses the `PyMuPDF` (fitz) library to extract raw text content from PDF documents.
--   **`prompts.py`**: Defines the master prompt template sent to the LLM. It dynamically incorporates the JSON schema from `schema.py` to ensure the model's output will be valid.
--   **`extractor.py`**: Contains the logic for interacting with the LLM. It formats the prompt, makes the call (currently mocked), receives the response, and uses the Pydantic models from `schema.py` to parse and validate the JSON.
--   **`pipeline.py`**: The main orchestrator. Its `process_article` function ties everything together, taking a file path as input and returning a fully validated `ExtractionOutput` object.
--   **Placeholder Modules (`pubmed.py`, `pmc.py`, `metrics.py`)**: These are included to outline the future direction of the project, such as integrating data fetching and performance evaluation.
